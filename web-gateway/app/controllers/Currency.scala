@@ -12,7 +12,7 @@ case class Currency private (name: String, step: Int, locale: Locale) {
   
   def format(value: Int): String = format.format(toDecimal(value))
 
-  def getDisplayName: String = currency.getDisplayName
+  def getDisplayName: String = currency.getDisplayName(Locale.JAPANESE)
 
   private def toDecimal(value: Int): Double = if (currency.getDefaultFractionDigits > 0) {
     value.toDouble / Math.pow(10, currency.getDefaultFractionDigits)

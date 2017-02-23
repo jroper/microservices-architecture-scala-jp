@@ -170,10 +170,10 @@ case class ItemForm(
   id: Option[UUID] = None,
   title: String = "",
   description: String = "",
-  currency: Currency = Currency.USD,
-  increment: BigDecimal = BigDecimal.decimal(0.5),
+  currency: Currency = Currency.JPY,
+  increment: BigDecimal = BigDecimal.decimal(50),
   reserve: BigDecimal = BigDecimal.exact(0),
-  duration: Int = 10,
+  duration: Int = 30,
   durationUnits: ChronoUnit = ChronoUnit.SECONDS
 )
 

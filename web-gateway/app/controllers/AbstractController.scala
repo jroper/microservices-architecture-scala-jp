@@ -3,10 +3,10 @@ package controllers
 import java.time.{Duration, Instant, ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.{Date, UUID}
+import java.util.{Date, Locale, UUID}
 
 import com.example.auction.user.api.{User, UserService}
-import org.ocpsoft.prettytime.PrettyTime
+import org.ocpsoft.prettytime.{PrettyTime, TimeUnit}
 import org.ocpsoft.prettytime.impl.{ResourcesTimeFormat, ResourcesTimeUnit}
 import org.ocpsoft.prettytime.units.JustNow
 import play.api.i18n.{Messages, MessagesApi}
@@ -38,16 +38,14 @@ abstract class AbstractController(messagesApi: MessagesApi, userService: UserSer
 
 object Nav {
   // todo - make these based on users language/timezone
-  val prettyTime: PrettyTime = new PrettyTime
-  val zoneId: ZoneId = ZoneId.systemDefault
-  val todayFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm")
-
-  prettyTime.removeUnit(classOf[JustNow])
-  val justNow: ResourcesTimeUnit = new ResourcesTimeUnit() {
-    protected def getResourceKeyPrefix: String = "JustNow"
+  lazy val prettyTime: PrettyTime = {
+    val pt = new PrettyTime(Locale.JAPANESE)
+    pt.getUnit(classOf[JustNow]).setMaxQuantity(0)
+    pt
   }
-  prettyTime.registerUnit(justNow, new ResourcesTimeFormat(justNow))
+  val zoneId: ZoneId = ZoneId.systemDefault
+  val todayFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.JAPANESE)
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm", Locale.JAPANESE)
 
 }
 

@@ -11,7 +11,7 @@ description=説明
 currency=通貨
 increment=最小入札単位
 incrementHelp=入札者が、その時点の最高入札額に上乗せする必要がある最小金額です。
-reservePrice=最低落札価格
+reserve=最低落札価格
 reserveHelp=オークションで最低落札価格より高い値段の入札がなかった商品は落札されません。
 status=オークションの状態
 duration=オークション期間
@@ -49,10 +49,10 @@ bidder=入札者
 youBidder=あなた
 anonymousBidder=入札者 {0}
 
-durationSeconds={0,choice, 1#1 second|1<{0,number} seconds}
-durationMinutes={0,choice, 1#1 minute|1<{0,number} minutes}
-durationHours={0,choice, 1#1 hour|1<{0,number} hours}
-durationDays={0,choice, 1#1 day|1<{0,number} days}
+durationSeconds={0}秒
+durationMinutes={0}分
+durationHours={0}時間
+durationDays={0}日
 durationWeeks={0,choice, 1#1 week|1<{0,number} weeks}
 
 my.auctions=マイ オークション
