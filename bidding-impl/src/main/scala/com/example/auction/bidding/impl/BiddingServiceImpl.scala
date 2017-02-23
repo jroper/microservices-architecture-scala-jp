@@ -48,7 +48,22 @@ class BiddingServiceImpl(persistentEntityRegistry: PersistentEntityRegistry)(imp
   override def bidEvents = TopicProducer.taggedStreamWithOffset(
     AuctionEvent.Tag.allTags.to[immutable.Seq]
   ) { (tag, offset) =>
-    Source.maybe
+    persistentEntityRegistry.eventStream(tag, offset)
+      .collect {
+        case EventStreamElement(itemId, BidPlaced(bid), offset) =>
+          val message = api.BidPlaced(UUID.fromString(itemId), convertBid(bid))
+          Future.successful((message, offset))
+        case EventStreamElement(itemId, BiddingFinished, offset) =>
+          persistentEntityRegistry.refFor[AuctionEntity](itemId)
+            .ask(GetAuction).map { auction =>
+              val message = api.BiddingFinished(UUID.fromString(itemId),
+                auction.biddingHistory.headOption
+                  .filter(_.bidPrice >= auction.auction.get.reservePrice)
+                  .map(convertBid))
+
+              (message, offset)
+            }
+      }.mapAsync(1)(identity)
   }
 
   private def convertBid(bid: Bid): api.Bid = api.Bid(bid.bidder, bid.bidTime, bid.bidPrice, bid.maximumBid)

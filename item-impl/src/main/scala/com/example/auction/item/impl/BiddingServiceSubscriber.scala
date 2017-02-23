@@ -11,7 +11,18 @@ import scala.concurrent.Future
 
 class BiddingServiceSubscriber(persistentEntityRegistry: PersistentEntityRegistry, biddingService: BiddingService) {
 
+  biddingService.bidEvents.subscribe.atLeastOnce(
+    Flow[BidEvent].mapAsync(1) {
+      case BiddingFinished(itemId, winningBid) =>
+        entityRef(itemId)
+          .ask(FinishAuction(winningBid.map(_.bidder), winningBid.map(_.price)))
+      case BidPlaced(itemId, bid) =>
+        entityRef(itemId).ask(UpdatePrice(bid.price))
+      case other =>
+        Future.successful(Done)
 
+    }
+  )
 
   private def entityRef(itemId: UUID) = persistentEntityRegistry.refFor[ItemEntity](itemId.toString)
 

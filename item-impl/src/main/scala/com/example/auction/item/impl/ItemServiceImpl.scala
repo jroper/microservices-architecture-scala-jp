@@ -38,10 +38,6 @@ class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRe
   override def startAuction(id: UUID) = authenticated(userId => ServerServiceCall { _ =>
     for {
       _ <- entityRef(id).ask(StartAuction(userId))
-      Some(item) <- entityRef(id).ask(GetItem)
-      _ <- biddingService.startAuction.invoke(new Auction(
-        id, item.creator, item.reservePrice, item.increment, item.auctionStart.get, item.auctionEnd.get
-      ))
     } yield Done
   })
 
@@ -57,7 +53,23 @@ class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRe
   }
 
   override def itemEvents = TopicProducer.taggedStreamWithOffset(ItemEvent.Tag.allTags.toList) { (tag, offset) =>
-    Source.maybe
+    registry.eventStream(tag, offset)
+      .collect {
+        case EventStreamElement(itemId, AuctionStarted(_), offset) =>
+          entityRefString(itemId).ask(GetItem).map {
+            case Some(item) =>
+              (api.AuctionStarted(
+                itemId = item.id,
+                creator = item.creator,
+                reservePrice = item.reservePrice,
+                increment = item.increment,
+                startDate = item.auctionStart.get,
+                endDate = item.auctionEnd.get
+              ), offset)
+          }
+
+      }.mapAsync(1)(identity)
+
   }
 
   private def convertItem(item: Item): api.Item = {
