@@ -22,6 +22,13 @@ abstract class BiddingApplication(context: LagomApplicationContext) extends Lago
   )
   override lazy val jsonSerializerRegistry = BiddingSerializerRegistry
 
+  override lazy val httpFilters = Seq(wire[DelayFilter])
+
+  if (configuration.getBoolean("kill").getOrElse(false)) {
+    applicationLifecycle.stop()
+    throw new RuntimeException("CRASH!")
+  }
+
   // Initialise everything
   persistentEntityRegistry.register(wire[AuctionEntity])
   readSide.register(wire[AuctionSchedulerProcessor])

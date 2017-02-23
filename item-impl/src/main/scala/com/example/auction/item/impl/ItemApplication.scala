@@ -5,6 +5,7 @@ import com.example.auction.item.api.ItemService
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
+import com.lightbend.lagom.scaladsl.client.LagomServiceClientComponents
 import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
 import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
 import com.lightbend.lagom.scaladsl.server._
@@ -15,6 +16,7 @@ import play.api.Environment
 import scala.concurrent.ExecutionContext
 
 trait ItemComponents extends LagomServerComponents
+  with LagomServiceClientComponents
   with CassandraPersistenceComponents {
 
   implicit def executionContext: ExecutionContext
@@ -26,6 +28,8 @@ trait ItemComponents extends LagomServerComponents
   lazy val itemRepository = wire[ItemRepository]
   lazy val jsonSerializerRegistry = ItemSerializerRegistry
 
+  lazy val biddingService = serviceClient.implement[BiddingService]
+
   persistentEntityRegistry.register(wire[ItemEntity])
   readSide.register(wire[ItemEventProcessor])
 }
@@ -34,8 +38,6 @@ abstract class ItemApplication(context: LagomApplicationContext) extends LagomAp
   with ItemComponents
   with AhcWSComponents
   with LagomKafkaComponents {
-
-  lazy val biddingService = serviceClient.implement[BiddingService]
 
   wire[BiddingServiceSubscriber]
 }

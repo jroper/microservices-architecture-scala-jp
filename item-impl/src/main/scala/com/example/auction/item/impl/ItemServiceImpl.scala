@@ -2,8 +2,11 @@ package com.example.auction.item.impl
 
 import java.util.UUID
 
+import akka.{Done, NotUsed}
 import akka.persistence.query.Offset
+import akka.stream.scaladsl.Source
 import com.datastax.driver.core.utils.UUIDs
+import com.example.auction.bidding.api.{Auction, BiddingService}
 import com.example.auction.item.api.ItemService
 import com.example.auction.item.api
 import com.example.auction.security.ServerSecurity._
@@ -15,7 +18,8 @@ import com.lightbend.lagom.scaladsl.server.ServerServiceCall
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRepository)(implicit ec: ExecutionContext) extends ItemService {
+class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRepository,
+  biddingService: BiddingService)(implicit ec: ExecutionContext) extends ItemService {
 
   private val DefaultPageSize = 10
 
@@ -32,7 +36,13 @@ class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRe
   })
 
   override def startAuction(id: UUID) = authenticated(userId => ServerServiceCall { _ =>
-    entityRef(id).ask(StartAuction(userId))
+    for {
+      _ <- entityRef(id).ask(StartAuction(userId))
+      Some(item) <- entityRef(id).ask(GetItem)
+      _ <- biddingService.startAuction.invoke(new Auction(
+        id, item.creator, item.reservePrice, item.increment, item.auctionStart.get, item.auctionEnd.get
+      ))
+    } yield Done
   })
 
   override def getItem(id: UUID) = ServerServiceCall { _ =>
@@ -47,13 +57,7 @@ class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRe
   }
 
   override def itemEvents = TopicProducer.taggedStreamWithOffset(ItemEvent.Tag.allTags.toList) { (tag, offset) =>
-    registry.eventStream(tag, offset)
-      .filter {
-        _.event match {
-          case x@(_: ItemCreated | _: AuctionStarted | _: AuctionFinished) => true
-          case _ => false
-        }
-      }.mapAsync(1)(convertEvent)
+    Source.maybe
   }
 
   private def convertItem(item: Item): api.Item = {
@@ -70,44 +74,6 @@ class ItemServiceImpl(registry: PersistentEntityRegistry, itemRepository: ItemRe
       case ItemStatus.Cancelled => api.ItemStatus.Cancelled
     }
   }
-
-
-  private def convertEvent(eventStreamElement: EventStreamElement[ItemEvent]): Future[(api.ItemEvent, Offset)] = {
-    eventStreamElement match {
-      case EventStreamElement(itemId, AuctionStarted(_), offset) =>
-        entityRefString(itemId).ask(GetItem).map {
-          case Some(item) =>
-            (api.AuctionStarted(
-              itemId = item.id,
-              creator = item.creator,
-              reservePrice = item.reservePrice,
-              increment = item.increment,
-              startDate = item.auctionStart.get,
-              endDate = item.auctionEnd.get
-            ), offset)
-        }
-      case EventStreamElement(itemId, AuctionFinished(winner, price), offset) =>
-        entityRefString(itemId).ask(GetItem).map {
-          case Some(item) =>
-            (api.AuctionFinished(
-              itemId = item.id,
-              item = convertItem(item)
-            ), offset)
-        }
-      case EventStreamElement(itemId, ItemCreated(item), offset) =>
-        Future.successful {
-          (api.ItemUpdated(
-            itemId = item.id,
-            creator = item.creator,
-            title = item.title,
-            description = item.description,
-            currencyId = item.currencyId,
-            status = convertStatus(item.status)
-          ), offset)
-        }
-    }
-  }
-
 
   private def entityRef(itemId: UUID) = entityRefString(itemId.toString)
 

@@ -59,11 +59,7 @@ class ItemController(messagesApi: MessagesApi, userService: UserService, itemSer
       val itemFuture = itemService.getItem(itemId)
         .handleRequestHeader(authenticate(user)).invoke()
       val bidHistoryFuture = bidService.getBids(itemId)
-        .handleRequestHeader(authenticate(user)).invoke().recover {
-        case e =>
-          log.error("Error loading bid history", e)
-          Nil
-      }
+        .handleRequestHeader(authenticate(user)).invoke()
 
       for {
         item <- itemFuture

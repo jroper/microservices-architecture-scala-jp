@@ -4,6 +4,7 @@ import java.util.UUID
 
 import akka.NotUsed
 import com.example.auction.security.SecurityHeaderFilter
+import com.lightbend.lagom.scaladsl.api.CircuitBreaker.PerNode
 import com.lightbend.lagom.scaladsl.api.broker.Topic
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 
@@ -32,6 +33,11 @@ trait BiddingService extends Service {
   def getBids(itemId: UUID): ServiceCall[NotUsed, Seq[Bid]]
 
   /**
+   * Start an auction.
+   */
+  def startAuction: ServiceCall[Auction, NotUsed]
+
+  /**
     * The bid events topic.
     */
   def bidEvents: Topic[BidEvent]
@@ -41,7 +47,9 @@ trait BiddingService extends Service {
 
     named("bidding").withCalls(
       pathCall("/api/item/:id/bids", placeBid _),
-      pathCall("/api/item/:id/bids", getBids _)
+      // Work around https://github.com/lagom/lagom/issues/532
+      pathCall("/api/item/:id/bids", getBids _).withCircuitBreaker(PerNode),
+      pathCall("/api/item", startAuction _)
     ).withTopics(
       topic("bidding-BidEvent", bidEvents)
     ).withHeaderFilter(SecurityHeaderFilter.Composed)

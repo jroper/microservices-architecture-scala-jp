@@ -2,11 +2,14 @@ package com.example.auction.bidding.impl
 
 import java.util.UUID
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
 import com.example.auction.bidding.api
 import com.example.auction.bidding.api.BiddingService
 import com.example.auction.security.ServerSecurity._
+import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.broker.TopicProducer
-import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
+import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
 import com.lightbend.lagom.scaladsl.server.ServerServiceCall
 
 import scala.collection.immutable
@@ -37,26 +40,15 @@ class BiddingServiceImpl(persistentEntityRegistry: PersistentEntityRegistry)(imp
     }
   }
 
-  override def bidEvents = TopicProducer.taggedStreamWithOffset(AuctionEvent.Tag.allTags.to[immutable.Seq]) { (tag, offset) =>
-    persistentEntityRegistry.eventStream(tag, offset).filter(e =>
-      e.event.isInstanceOf[BidPlaced] || e.event.isInstanceOf[BiddingFinished.type]
-    ).mapAsync(1) { event =>
-      event.event match {
-        case BidPlaced(bid) =>
-          val message = api.BidPlaced(UUID.fromString(event.entityId), convertBid(bid))
-          Future.successful((message, event.offset))
-        case BiddingFinished =>
-          persistentEntityRegistry.refFor[AuctionEntity](event.entityId).ask(GetAuction).map { auction =>
+  override def startAuction = ServiceCall { auction =>
+    entityRef(auction.itemId).ask(StartAuction(Auction(auction.itemId, auction.creator,
+      auction.reservePrice, auction.increment, auction.startDate, auction.endDate))).map(_ => NotUsed)
+  }
 
-            val message = api.BiddingFinished(UUID.fromString(event.entityId),
-              auction.biddingHistory.headOption
-                .filter(_.bidPrice >= auction.auction.get.reservePrice)
-                .map(convertBid))
-
-            (message, event.offset)
-          }
-      }
-    }
+  override def bidEvents = TopicProducer.taggedStreamWithOffset(
+    AuctionEvent.Tag.allTags.to[immutable.Seq]
+  ) { (tag, offset) =>
+    Source.maybe
   }
 
   private def convertBid(bid: Bid): api.Bid = api.Bid(bid.bidder, bid.bidTime, bid.bidPrice, bid.maximumBid)
