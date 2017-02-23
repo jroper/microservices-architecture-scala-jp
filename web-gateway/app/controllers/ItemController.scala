@@ -209,11 +209,11 @@ object ItemForm {
       Seq(
         {
           if (!itemForm.currency.isValidStep(itemForm.increment.doubleValue())) {
-            Some(FormError("increment", "invalid.step"))
+            Some(FormError("increment", "invalid.increment"))
           } else None
         }, {
           if (!itemForm.currency.isValidStep(itemForm.reserve.doubleValue())) {
-            Some(FormError("reserve", "invalid.step"))
+            Some(FormError("reserve", "invalid.reserve"))
           } else None
         }, {
           // Make sure that the increment and reserve are multiples of 50c - in a real app, this would be more complex
@@ -221,10 +221,9 @@ object ItemForm {
           if (!(itemForm.increment * 2).isValidInt) {
             Some(FormError("increment", "invalid.increment"))
           } else {
-            val incrementInt = (itemForm.increment * 2).toIntExact
-            if (incrementInt <= 0) {
+            if (itemForm.increment <= 0) {
               Some(FormError("increment", "invalid.increment"))
-            } else if (incrementInt >= 100) {
+            } else if (itemForm.currency.toPriceUnits(itemForm.increment.doubleValue()) >= 100 * itemForm.currency.step) {
               Some(FormError("increment", "invalid.increment"))
             } else None
           }

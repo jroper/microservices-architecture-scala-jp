@@ -1,54 +1,53 @@
-lagomAuction=Lagom Auction
-logInAs=Log in as...
+lagomAuction=Lagom オークション
+logInAs=ログイン
 
-formErrors=There are some errors in your form.
+formErrors=フォームの記入内容にエラーがあります。
 
-name=Name
-createUser=Create user
+name=名前
+createUser=ユーザ作成
 
-title=Title
-description=Description
-currency=Currency
-increment=Minimum bid increment
-incrementHelp=When someone makes a bid, their bid must be at least this much more than the current winning bid.
-reserve=Reserve price
-reserveHelp=The reserve is the minimum price that the auction must reach in order for the item to be won by someone.
-status=Auction status
-duration=Auction duration
-durationUnits=Units
-createItem=Create item
+title=タイトル
+description=説明
+currency=通貨
+increment=最小入札単位
+incrementHelp=入札者が、その時点の最高入札額に上乗せする必要がある最小金額です。
+reservePrice=最低落札価格
+reserveHelp=オークションで最低落札価格より高い値段の入札がなかった商品は落札されません。
+status=オークションの状態
+duration=オークション期間
+durationUnits=単位
+createItem=商品を作成する
 
-invalid.increment=The increment must be a multiple of 0.5.
-invalid.reserve=The reserve must be a multiple of 0.5.
+invalid.increment=最小入札単位は 0.5 の倍数で指定してください。
+invalid.reserve=最低落札価格は 0.5 の倍数で指定してください。
 
-seller=Seller
-auctionStart=Auction start
-auctionEnd=Auction end
-currentPrice=Current price
-finalPrice=Final price
-auctionWinner=Auction winner
-startAuction=Start auction
+seller=出品者
+auctionStart=オークション開始
+auctionEnd=オークション終了
+currentPrice=現在価格
+finalPrice=落札価格
+auctionWinner=落札者
+startAuction=オークションを開始する
 
-bidAcceptedMessage=Congratulations! Your bid has been accepted, and you are the highest bidder, with a current price of {0}.
-bidAcceptedOutbidMessage=Your bid has been accepted, however you have been outbid by another bidder. The current price is {0}.
-bidAcceptedBelowReserveMessage=Your bid has been accepted, however it is below the reserve price for this auction. The current price is {0}.
-bidTooLowMessage=Your bid was not at least the increment above the current price of {0}.
-bidNotStartedMessage=The auction has not started.
-bidFinishedMessage=The auction has already finished.
-bidCancelledMessage=The auction has been cancelled.
+bidAcceptedMessage=入札を受け付けました。おめでとうございます！あなたが最高額入札者です。現在価格は {0} です。
+bidAcceptedOutbidMessage=入札を受け付けましたが、他の入札者がより高い値を付けています。現在価格は {0} です。
+bidAcceptedBelowReserveMessage=入札を受け付けましたが、あなたの入札額は最低落札価格を下回っています。現在価格は {0} です。
+bidTooLowMessage=現在価格 {0} より高い値段で入札してください。
+bidNotStartedMessage=このオークションはまだ開始していません。
+bidFinishedMessage=このオークションは終了しました。
+bidCancelledMessage=このオークションはキャンセルされました。
 
-bid=Bid price
-placeBid=Place bid
-currentWinningBidderMessage=You are the current highest bidder, with a maximum bid of {0}. You can change your maximum bid by placing another bid, \
-  either up or down to the current bid price.
+bid=入札額
+placeBid=入札する
+currentWinningBidderMessage=現在の最高額入札者はあなたです。あなたの最高入札額は {0} です。新たな価格で入札することで最高入札額を変更できます。この際、現在の入札額を上回っても下回っても構いません。
 
-biddingHistory=Bidding history
-noBidsPlaced=No bids placed
+biddingHistory=入札履歴
+noBidsPlaced=入札はまだありません。
 
-bidTime=Bid time
-bidder=Bidder
-youBidder=you
-anonymousBidder=Bidder {0}
+bidTime=入札時刻
+bidder=入札者
+youBidder=あなた
+anonymousBidder=入札者 {0}
 
 durationSeconds={0,choice, 1#1 second|1<{0,number} seconds}
 durationMinutes={0,choice, 1#1 minute|1<{0,number} minutes}
@@ -56,16 +55,16 @@ durationHours={0,choice, 1#1 hour|1<{0,number} hours}
 durationDays={0,choice, 1#1 day|1<{0,number} days}
 durationWeeks={0,choice, 1#1 week|1<{0,number} weeks}
 
-my.auctions=My auctions
-noItems.Created=No items awaiting auction
-items.Created=Awaiting auction
-noItems.Auction=No items under auction
-items.Auction=Under auction
-noItems.Completed=No completed auctions
-items.Completed=Completed auctions
-noItems.Cancelled=No cancelled auctions
-items.Cancelled=Cancelled auctions
+my.auctions=マイ オークション
+noItems.Created=オークションを待っている商品はありません。
+items.Created=オークション待ち
+noItems.Auction=オークション中の商品はありません。
+items.Auction=オークション中
+noItems.Completed=オークションの終わった商品はありません。
+items.Completed=オークション終了
+noItems.Cancelled=キャンセルされた商品はありません。
+items.Cancelled=キャンセル済み
 items.caption={0} ({1})
 
-pagination.prev=Previous
-pagination.next=Next
+pagination.prev=戻る
+pagination.next=進む
