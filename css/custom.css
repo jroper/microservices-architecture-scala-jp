@@ -2,6 +2,7 @@
     position: relative;
     left: 0;
     top: 0;
+    text-align: left;
 }
 
 .image-fragments > img:first-child {
@@ -12,12 +13,13 @@
     position: absolute;
     left: 0;
     top: 0;
+    max-width: 75%;
 }
 
 .reveal section .image-fragments img {
     border: 0;
     box-shadow: none;
-    margin: 15px 25px;
+    margin: 15px 110px;
 }
 
 /* increases contrast on background */
@@ -27,4 +29,11 @@
 
 #presentation a, #presentation a:visited {
     color: white;
+}
+
+subtitle {
+    font-size: 0.8em;
+    color: yellow;
+    margin-top: 20px;
+    display: block;
 }

@@ -1,0 +1,102 @@
+<templateSet group="LagomArchitectureScala">
+  <template name="pb1" value="persistentEntityRegistry.eventStream(tag, offset)" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pb2" value="&#10;  .collect {&#10;    $END$&#10;  }.mapAsync(1)(identity)" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pb3" value="case EventStreamElement(itemId, BidPlaced(bid), offset) =&gt;&#10;  $END$&#10;case EventStreamElement(itemId, BiddingFinished, offset) =&gt;&#10;  " toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pb4" value="val message = api.BidPlaced(UUID.fromString(itemId), convertBid(bid))&#10;Future.successful((message, offset))" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pb5" value="persistentEntityRegistry.refFor[AuctionEntity](itemId)&#10;  .ask(GetAuction).map { auction =&gt;&#10;    val message = api.BiddingFinished(UUID.fromString(itemId),&#10;      auction.biddingHistory.headOption&#10;        .filter(_.bidPrice &gt;= auction.auction.get.reservePrice)&#10;        .map(convertBid))&#10;&#10;    (message, offset)&#10;  }" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="si1" value="Flow[ItemEvent].mapAsync(1) {&#10;  $END$&#10;}" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="si2" value="case as: api.AuctionStarted =&gt;&#10;  $END$&#10;case other =&gt;&#10;  Future.successful(Done)" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="si3" value="val auction = Auction(&#10;  itemId = as.itemId,&#10;  creator = as.creator,&#10;  reservePrice = as.reservePrice,&#10;  increment = as.increment,&#10;  startTime = as.startDate,&#10;  endTime = as.endDate&#10;)&#10;entityRef(as.itemId).ask(StartAuction(auction))" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi1" value="registry.eventStream(tag, offset)" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi2" value="&#10;  .collect {&#10;    $END$&#10;  }.mapAsync(1)(identity)&#10;" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi3" value="case EventStreamElement(itemId, AuctionStarted(_), offset) =&gt;&#10;  $END$" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi4" value="entityRefString(itemId)" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi5" value=".ask(GetItem).map {&#10;  $END$&#10;}&#10;" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="pi6" value="case Some(item) =&gt;&#10;  (api.AuctionStarted(&#10;    itemId = item.id,&#10;    creator = item.creator,&#10;    reservePrice = item.reservePrice,&#10;    increment = item.increment,&#10;    startDate = item.auctionStart.get,&#10;    endDate = item.auctionEnd.get&#10;  ), offset)" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="sb1" value="Flow[BidEvent].mapAsync(1) {&#10;  $END$&#10;}" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="sb2" value="case BiddingFinished(itemId, winningBid) =&gt;&#10;  $END$&#10;case BidPlaced(itemId, bid) =&gt;&#10;  &#10;case other =&gt;&#10;  Future.successful(Done)&#10;" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="sb3" value="entityRef(itemId)&#10;  .ask(FinishAuction(winningBid.map(_.bidder), winningBid.map(_.price)))" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="sb4" value="entityRef(itemId).ask(UpdatePrice(bid.price))" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="cb1" value=".recover {&#10;  case e =&gt;&#10;    $END$&#10;}" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="cb2" value="log.error(&quot;Error loading bid history&quot;, e)&#10;Nil" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="SCALA_CODE" value="true" />
+    </context>
+  </template>
+</templateSet>

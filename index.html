@@ -1,37 +1,37 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Monolith to Reactive - it's all about architecture</title>
+        <title>モノリスからリアクティブへ - 大切なのはアーキテクチャ</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<link rel="stylesheet" href="css/custom.css">
+        <link rel="stylesheet" href="css/custom.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal" id="presentation">
-			<div class="slides">
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal" id="presentation">
+            <div class="slides">
 
 <section>
 
-    <h2>Monolith to reactive</h2>
+    <h2>モノリスからリアクティブへ</h2>
 
-    <p style="font-style: italic;">It's all about architecture</p>
+    <p style="font-style: italic;">大切なのはアーキテクチャ</p>
 
     <p style="margin-top: 100px; font-weight: bold;">James Roper</p>
 
@@ -49,6 +49,9 @@
         <li class="fragment">See Lagom in action</li>
         <li class="fragment">Live coding!</li>
     </ul>
+
+    <subtitle>モノリスを置き換える際の落とし穴を明らかにし、リアクティブなソリューションを設計する</subtitle>
+    <subtitle>Lagom を使ってライブコーディング！</subtitle>
 </section>
 
 <section>
@@ -60,6 +63,9 @@
         <li class="fragment">Was a monolith, converted to microservices</li>
         <li class="fragment">Will one day overtake ebay!</li>
     </ul>
+
+    <subtitle>Lagom でモノリシックなオークションサイトをマイクロサービスに変換</subtitle>
+    <subtitle>めざせ eBay！</subtitle>
 </section>
 
 <section>
@@ -71,6 +77,8 @@
         <img src="assets/img4.png" class="fragment"/>
         <img src="assets/img5.png" class="fragment"/>
     </div>
+
+    <subtitle>モノリスから商品サービスと入札サービスを切り出してゲートウェイを置く</subtitle>
 </section>
 </section>
 
@@ -86,6 +94,9 @@
             </ul>
         </li>
     </ul>
+
+    <subtitle>マイクロサービス化すると可動部分が増える</subtitle>
+    <subtitle>それによって障害が増え、一貫性が崩れやすくなる</subtitle>
 </section>
 
 <section>
@@ -94,6 +105,8 @@
     <p class="fragment">
     <b>synchronous</b> <i>adj.</i> - existing or occurring at the same time.
     </p>
+
+    <subtitle>同期性 - 物事が同時に存在したり起きたりすること</subtitle>
 </section>
 
 <section>
@@ -107,6 +120,8 @@
         </li>
         <li class="fragment">Both systems must be responsive at the same time</li>
     </ul>
+
+    <subtitle>リクエストする側とレスポンスする側が、同時に即応性を保つ必要がある</subtitle>
 </section>
 
 <section>
@@ -116,6 +131,8 @@
         <img src="assets/img7.png" class="fragment"/>
         <img src="assets/img8.png" class="fragment"/>
     </div>
+
+    <subtitle>入札サービスが遅延すると、商品サービスが正常でも遅延が発生する</subtitle>
 </section>
 </section>
 
@@ -132,6 +149,8 @@
         <li class="fragment">Protects already failing services</li>
         <li class="fragment">Allows fail fast handling</li>
     </ul>
+
+    <subtitle>サーキットブレーカー: 障害時にブレーカーを上げて、障害を起こしたサービスを保護する</subtitle>
 </section>
 
 <section>
@@ -141,6 +160,8 @@
         <img src="assets/img11.png" class="fragment"/>
         <img src="assets/img12.png" class="fragment"/>
     </div>
+
+    <subtitle>ゲートウェイは、入札サービスの遅延を検出してブレーカーを上げる</subtitle>
 </section>
 </section>
 
@@ -152,6 +173,9 @@
         <li class="fragment">Work around failure by degrading</li>
         <li class="fragment">Not every call is necessary to render every page</li>
     </ul>
+
+    <subtitle>障害復旧: サービス品質を下げて障害をワークアラウンドする</subtitle>
+    <subtitle>各ページのレンダリングに全てのマイクロサービス呼び出しが必要なわけではない</subtitle>
 </section>
 
 <section>
@@ -159,6 +183,8 @@
         <img src="assets/img13.png"/>
         <img src="assets/img14.png" class="fragment"/>
     </div>
+
+    <subtitle>商品サービスが動いているから、オークションサイト全体は止めずに済む</subtitle>
 </section>
 </section>
 
@@ -179,6 +205,9 @@
         <img src="assets/img22.png" class="fragment"/>
         <img src="assets/img23.png" class="fragment"/>
     </div>
+
+    <subtitle>障害により一貫性が失われる</subtitle>
+    <subtitle>オークションの開始が入札サービスの障害により伝わらず、ユーザが入札できない</subtitle>
 </section>
 
 <section>
@@ -191,6 +220,9 @@
             </ul>
         </li>
     </ul>
+
+    <subtitle>同期通信で「同時」に更新をかけるのは危険</subtitle>
+    <subtitle>サービス境界を超えるようなトランザクションはできない</subtitle>
 </section>
 </section>
 
@@ -203,6 +235,9 @@
         <li class="fragment">Perfect if you already persist events</li>
         <li class="fragment">Use persistent events as a source of messages</li>
     </ul>
+
+    <subtitle>非同期メッセージング: 全てのシステムが同時に即応性を保つ必要はない</subtitle>
+    <subtitle>イベントを永続化してメッセージのソースとして使う</subtitle>
 </section>
 
 <section>
@@ -213,6 +248,9 @@
         <img src="assets/img26.png" class="fragment"/>
         <img src="assets/img27.png" class="fragment"/>
     </div>
+
+    <subtitle>オークション開始のメッセージは、入札サービスに非同期で伝わる</subtitle>
+    <subtitle>入札サービスが障害を起こしても、復旧すればユーザは入札できる</subtitle>
 </section>
 </section>
 
@@ -225,6 +263,9 @@
         <li class="fragment">Price was also $0</li>
         <li class="fragment">Users may tolerate no history, but not wrong price</li>
     </ul>
+
+    <subtitle>許容できないデグレード: 入札履歴が 0 件になるのはともかく</subtitle>
+    <subtitle>入札価格が 0 ドルにフォールバックするのはダメ</subtitle>
 </section>
 
 <section>
@@ -232,6 +273,8 @@
         <img src="assets/img28.png"/>
         <img src="assets/img29.png" class="fragment"/>
     </div>
+
+    <subtitle>「えっ、この商品の入札価格 0 ドル？」</subtitle>
 </section>
 </section>
 
@@ -252,6 +295,9 @@
             </ul>
         </li>
     </ul>
+
+    <subtitle>非正規化: 他のサービスに重要な情報を送って重複保存する</subtitle>
+    <subtitle>システムにとって重要なものと、ビジネスにとって重要なものがある</subtitle>
 </section>
 
 <section>
@@ -260,6 +306,9 @@
         <img src="assets/img31.png" class="fragment"/>
         <img src="assets/img32.png" class="fragment"/>
     </div>
+
+    <subtitle>入札価格が更新されたことを商品サービスにも伝えておく</subtitle>
+    <subtitle>入札サービスが障害を起こしても、商品サービスから入札価格を取得できる</subtitle>
 </section>
 </section>
 
@@ -279,49 +328,52 @@
             </ul>
         </li>
     </ul>
+
+    <subtitle>モノリスをマイクロサービスに置き換えるにはデータフローの再設計が必要</subtitle>
+    <subtitle>障害と一貫性の崩れは管理する必要がある</subtitle>
 </section>
 
 <section>
     <h2>Next steps</h2>
 
     <p><a href="http://lagomframework.com">http://lagomframework.com</a></p>
-    <p><a href="https://github.com/jroper/microservices-architecture">https://github.com/jroper/microservices-architecture</a></p>
+    <p><a href="https://github.com/jroper/microservices-architecture-scala-jp">https://github.com/jroper/microservices-architecture-scala-jp</a></p>
 </section>
 </section>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
 
-		<script>
+        <script>
 
             var sections = document.getElementsByTagName('section');
-			for (var i = 0; i < sections.length; i++) {
+            for (var i = 0; i < sections.length; i++) {
                 var slide = sections[i];
-  				if (!(slide.getAttribute('data-background') ||
-        				slide.getAttribute('data-background-video') ||
-        				slide.getAttribute('data-background-iframe'))) {
-    				slide.setAttribute('data-background', 'assets/lagom-hero.png');
-  				}
-			}
+                if (!(slide.getAttribute('data-background') ||
+                        slide.getAttribute('data-background-video') ||
+                        slide.getAttribute('data-background-iframe'))) {
+                    slide.setAttribute('data-background', 'assets/lagom-hero.png');
+                }
+            }
 
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				],
+                // More info https://github.com/hakimel/reveal.js#dependencies
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ],
 
                 keyboard: {
                     86: "togglePause"
                 }
-			});
-		</script>
-	</body>
+            });
+        </script>
+    </body>
 </html>
